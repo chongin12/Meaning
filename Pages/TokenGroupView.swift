@@ -6,23 +6,31 @@
 //
 
 import SwiftUI
+import WrappingHStack
 
 struct TokenGroupView: View {
     var tokenGroupID: String
     @EnvironmentObject var tokenStorage: TokenStorage
-    var currentTokenGroup: TokenGroup? {
+    var currentTokenGroup: TokenGroup {
         tokenStorage.find(by: tokenGroupID)
     }
     init(_ tokenGroupID: String) {
         self.tokenGroupID = tokenGroupID
     }
     var body: some View {
-        Text("id : \(currentTokenGroup?.id ?? "no currentTokenGroup")")
-        Text(currentTokenGroup?.tokens.debugDescription ?? "none!")
+        ScrollView {
+            WrappingHStack(currentTokenGroup.tokens, alignment: .leading, spacing: .constant(25.0), lineSpacing: 50.0) { token in
+                TokenView(token: token)
+            }
+            .padding()
+        }
+        .scrollIndicators(.hidden)
     }
 }
 
 #Preview {
-    TokenGroupView(TokenStorage.mockData.words[0].id)
-        .environmentObject(TokenStorage.mockData)
+    NavigationStack {
+        TokenGroupView(TokenStorage.mockData.sentences[2].id)
+            .environmentObject(TokenStorage.mockData)
+    }
 }

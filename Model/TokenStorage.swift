@@ -22,8 +22,14 @@ final class TokenStorage: ObservableObject {
             TokenGroup(colorTheme: .peach, tokens: [TokenModel("second", colorTheme: .peach)]),
         ],
         phrases: [
-            TokenGroup(tokens: [TokenModel("first on phrases", colorTheme: .ravender)]),
-            TokenGroup(tokens: [TokenModel("second on phrases", colorTheme: .mint)]),
+            TokenGroup(
+                colorTheme: .skyblue,
+                tokens: [TokenModel("first on phrases", colorTheme: .ravender)]
+            ),
+            TokenGroup(
+                colorTheme: .skyblue,
+                tokens: [TokenModel("second on phrases", colorTheme: .ravender)]
+            )
         ],
         sentences: [
             TokenGroup(tokens: [
@@ -36,30 +42,98 @@ final class TokenStorage: ObservableObject {
                 TokenModel("on me", colorTheme: .vanilla),
                 TokenModel("asdfasdfasdfasdf.", colorTheme: .pink),
             ]),
+            TokenGroup(tokens: [
+                TokenModel("I", colorTheme: .ravender),
+                TokenModel("have", colorTheme: .vanilla),
+                TokenModel("too", colorTheme: .pink),
+                TokenModel("many", colorTheme: .ravender),
+                TokenModel("components", colorTheme: .vanilla),
+                TokenModel("hahaha!", colorTheme: .pink),
+                TokenModel("I", colorTheme: .ravender),
+                TokenModel("have", colorTheme: .vanilla),
+                TokenModel("too", colorTheme: .pink),
+                TokenModel("many", colorTheme: .ravender),
+                TokenModel("components", colorTheme: .vanilla),
+                TokenModel("hahaha!", colorTheme: .pink),
+                TokenModel("I", colorTheme: .ravender),
+                TokenModel("have", colorTheme: .vanilla),
+                TokenModel("too", colorTheme: .pink),
+                TokenModel("many", colorTheme: .ravender),
+                TokenModel("components", colorTheme: .vanilla),
+                TokenModel("hahaha!", colorTheme: .pink),
+                TokenModel("I", colorTheme: .ravender),
+                TokenModel("have", colorTheme: .vanilla),
+                TokenModel("too", colorTheme: .pink),
+                TokenModel("many", colorTheme: .ravender),
+                TokenModel("components", colorTheme: .vanilla),
+                TokenModel("hahaha!", colorTheme: .pink),
+                TokenModel("I", colorTheme: .ravender),
+                TokenModel("have", colorTheme: .vanilla),
+                TokenModel("too", colorTheme: .pink),
+                TokenModel("many", colorTheme: .ravender),
+                TokenModel("components", colorTheme: .vanilla),
+                TokenModel("hahaha!", colorTheme: .pink),
+                TokenModel("I", colorTheme: .ravender),
+                TokenModel("have", colorTheme: .vanilla),
+                TokenModel("too", colorTheme: .pink),
+                TokenModel("many", colorTheme: .ravender),
+                TokenModel("components", colorTheme: .vanilla),
+                TokenModel("hahaha!", colorTheme: .pink),
+                TokenModel("I", colorTheme: .ravender),
+                TokenModel("have", colorTheme: .vanilla),
+                TokenModel("too", colorTheme: .pink),
+                TokenModel("many", colorTheme: .ravender),
+                TokenModel("components", colorTheme: .vanilla),
+                TokenModel("hahaha!", colorTheme: .pink),
+                TokenModel("I", colorTheme: .ravender),
+                TokenModel("have", colorTheme: .vanilla),
+                TokenModel("too", colorTheme: .pink),
+                TokenModel("many", colorTheme: .ravender),
+                TokenModel("components", colorTheme: .vanilla),
+                TokenModel("hahaha!", colorTheme: .pink),
+                TokenModel("I", colorTheme: .ravender),
+                TokenModel("have", colorTheme: .vanilla),
+                TokenModel("too", colorTheme: .pink),
+                TokenModel("many", colorTheme: .ravender),
+                TokenModel("components", colorTheme: .vanilla),
+                TokenModel("hahaha!", colorTheme: .pink),
+                TokenModel("I", colorTheme: .ravender),
+                TokenModel("have", colorTheme: .vanilla),
+                TokenModel("too", colorTheme: .pink),
+                TokenModel("many", colorTheme: .ravender),
+                TokenModel("components", colorTheme: .vanilla),
+                TokenModel("hahaha!", colorTheme: .pink),
+                TokenModel("I", colorTheme: .ravender),
+                TokenModel("have", colorTheme: .vanilla),
+                TokenModel("too", colorTheme: .pink),
+                TokenModel("many", colorTheme: .ravender),
+                TokenModel("components", colorTheme: .vanilla),
+                TokenModel("hahaha!", colorTheme: .pink),
+            ])
         ]
     )
-    public func find(by ID: String) -> TokenGroup? {
+    public func find(by ID: String) -> TokenGroup {
         let filteredWords = words.filter {
             $0.id == ID
         }
         if !filteredWords.isEmpty {
-            return filteredWords.first
+            return filteredWords[0]
         }
 
         let filteredPhrases = phrases.filter {
             $0.id == ID
         }
         if !filteredPhrases.isEmpty {
-            return filteredPhrases.first
+            return filteredPhrases[0]
         }
 
         let filteredSentences = sentences.filter {
             $0.id == ID
         }
         if !filteredSentences.isEmpty {
-            return filteredSentences.first
+            return filteredSentences[0]
         }
 
-        return nil
+        return .empty
     }
 }

@@ -10,17 +10,46 @@ import SwiftUI
 struct SplitView: View {
     @State private var selection: TokenGroup?
     @EnvironmentObject var tokenStorage: TokenStorage
+    @Environment(\.showType) var showType
     var body: some View {
         NavigationSplitView {
             List {
                 wordsSection()
                 phrasessSection()
+                sentencesSection()
             }
         } detail: {
-            if let selection {
-                TokenGroupView(selection.id)
-            } else {
-                Text("choose any Words, Phrases, or Sentences in Sidebar")
+            Group {
+                if let selection {
+                    TokenGroupView(selection.id)
+                } else {
+                    Text("choose any Words, Phrases, or Sentences in Sidebar")
+                }
+            }
+            .toolbar {
+                ToolbarItemGroup(placement: .topBarTrailing) {
+                    Picker("asdf", selection: showType) {
+                        ForEach(ShowType.allCases) { type in
+                            switch type {
+                            case .text:
+                                Image(systemName: "rectangle")
+                                    .tag(ShowType.text)
+                            case .text_picture:
+                                Image(systemName: "rectangle.tophalf.inset.filled")
+                                    .tag(ShowType.text_picture)
+                            case .picture:
+                                Image(systemName: "rectangle.fill")
+                                    .tag(ShowType.picture)
+                            }
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    Button(action: {
+
+                    }, label: {
+                        Image(systemName: "square.and.arrow.up")
+                    })
+                }
             }
         }
         .navigationBarBackButtonHidden()

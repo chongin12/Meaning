@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-enum ShowType {
+enum ShowType: String, CaseIterable {
     case text
     case text_picture
     case picture
@@ -21,6 +21,12 @@ enum ShowType {
         case .picture:
             self = .text
         }
+    }
+}
+
+extension ShowType: Identifiable {
+    var id: String {
+        self.rawValue
     }
 }
 

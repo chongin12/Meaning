@@ -26,12 +26,16 @@ extension TokenGroup {
         colorTheme: .peach,
         tokens: [.mockData]
     )
+
+    static let empty = TokenGroup(
+        tokens: []
+    )
 }
 
 extension TokenGroup {
     private var serializedString: String {
         self.tokens.reduce("") { partialResult, token in
-            partialResult + token.text
+            partialResult + token.text + " "
         }
     }
 }

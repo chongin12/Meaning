@@ -34,9 +34,15 @@ let package = Package(
             ]
         )
     ],
+    dependencies: [
+        .package(url: "https://github.com/dkk/WrappingHStack", .exact("2.2.11"))
+    ],
     targets: [
         .executableTarget(
             name: "AppModule",
+            dependencies: [
+                .product(name: "WrappingHStack", package: "wrappinghstack")
+            ],
             path: "."
         )
     ]

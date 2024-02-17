@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-
 enum Dimension {
     enum TokenText {
         static let minWidth: CGFloat = 200
@@ -51,7 +50,7 @@ struct TokenView: View {
                     .foregroundStyle(token.colorTheme.textColor)
             }
         }
-        .frame(minWidth: Dimension.TokenText.minWidth, maxWidth: .infinity)
+        .frame(minWidth: Dimension.TokenText.minWidth)
         .background {
             RoundedRectangle(cornerRadius: 25.0, style: .continuous)
                 .fill(Colors.point)

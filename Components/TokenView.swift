@@ -1,5 +1,5 @@
 //
-//  Token.swift
+//  TokenView.swift
 //
 //
 //  Created by 정종인 on 2/12/24.
@@ -35,8 +35,12 @@ struct TokenView: View {
     var body: some View {
         ZStack(alignment: .top) {
             if showType.wrappedValue == .picture || showType.wrappedValue == .text_picture {
-                Text("")
+                Text(token.text)
+                    .font(.tokenText)
+                    .foregroundStyle(Color.clear)
+                    .padding()
                     .frame(minHeight: minHeight)
+                    .zIndex(1)
             }
             if showType.wrappedValue == .text || showType.wrappedValue == .text_picture {
                 Text(token.text)
@@ -48,6 +52,7 @@ struct TokenView: View {
                             .frame(minWidth: Dimension.TokenText.minWidth, maxWidth: .infinity)
                     }
                     .foregroundStyle(token.colorTheme.textColor)
+                    .zIndex(2)
             }
         }
         .frame(minWidth: Dimension.TokenText.minWidth)

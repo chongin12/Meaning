@@ -7,11 +7,12 @@
 
 import SwiftUI
 
-struct TokenModel {
+struct TokenModel: Identifiable {
     var text: String
     // 그리기 요소 저장할 var 필요
     var colorTheme: ColorTheme
     var status: StatusType
+    var id = UUID()
     init(_ text: String, colorTheme: ColorTheme = .empty, status: StatusType = .default) {
         self.text = text
         self.colorTheme = colorTheme
@@ -27,13 +28,7 @@ extension TokenModel {
     }
 }
 
-extension TokenModel: Identifiable {
-    var id: String {
-        self.text
-    }
-}
-
-extension TokenModel: Hashable {
+extension TokenModel: Hashable, Equatable {
     
 }
 

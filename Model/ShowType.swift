@@ -25,9 +25,7 @@ enum ShowType: String, CaseIterable {
 }
 
 extension ShowType: Identifiable {
-    var id: String {
-        self.rawValue
-    }
+    var id: Self { self }
 }
 
 private struct ShowTypeKey: EnvironmentKey {

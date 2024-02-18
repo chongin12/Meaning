@@ -9,10 +9,11 @@ import SwiftUI
 
 struct SplitView: View {
     @State private var selection: TokenGroup?
+    @State private var columnVisibility: NavigationSplitViewVisibility = .all
     @EnvironmentObject var tokenStorage: TokenStorage
     @Environment(\.showType) var showType
     var body: some View {
-        NavigationSplitView {
+        NavigationSplitView(columnVisibility: $columnVisibility) {
             List {
                 wordsSection()
                 phrasessSection()
@@ -21,7 +22,7 @@ struct SplitView: View {
         } detail: {
             Group {
                 if let selection {
-                    TokenGroupView(selection.id)
+                    TokenGroupView(selection.id, $columnVisibility)
                 } else {
                     Text("choose any Words, Phrases, or Sentences in Sidebar")
                 }
@@ -53,6 +54,7 @@ struct SplitView: View {
             }
         }
         .navigationBarBackButtonHidden()
+        .tint(.brown)
     }
 
     private func wordsSection() -> some View {

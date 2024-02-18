@@ -59,7 +59,7 @@ enum Colors {
     )
 }
 
-enum ColorTheme: String {
+enum ColorTheme: String, CaseIterable {
     case empty
     case smoky
     case pink
@@ -128,6 +128,10 @@ enum ColorTheme: String {
             Image("violet")
         }
     }
+}
+
+extension ColorTheme: Identifiable {
+    var id: Self { self }
 }
 
 struct ColorPair {

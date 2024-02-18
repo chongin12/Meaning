@@ -7,12 +7,10 @@
 
 import SwiftUI
 
-struct SwiftUIView: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+struct ScaleButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 1.1 : 1)
+            .animation(.easeInOut, value: configuration.isPressed)
     }
-}
-
-#Preview {
-    SwiftUIView()
 }

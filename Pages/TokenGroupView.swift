@@ -33,7 +33,7 @@ struct TokenGroupView: View {
             WrappingHStack(currentTokenGroup.tokens, alignment: .leading, lineSpacing: 25.0) { token in
                 Button(action: {
                     columnVisibility = .detailOnly
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                         withAnimation(.interactiveSpring(response: 0.6, dampingFraction: 1.0, blendDuration: 0.7)) {
                             currentToken = token
                             showDetailPage = true
@@ -42,7 +42,7 @@ struct TokenGroupView: View {
                     }
                 }, label: {
                     TokenView(token: token)
-                        .scaleEffect(currentToken?.id == token.id && showDetailPage ? 1 : 0.9)
+                        .scaleEffect(currentToken?.id == token.id && showDetailPage ? 1.5 : 0.9)
                         .matchedGeometryEffect(id: token.id, in: animation)
                 })
                 .buttonStyle(ScaleButtonStyle())
@@ -55,6 +55,7 @@ struct TokenGroupView: View {
                 DetailView(token: currentToken)
             }
         }
+        .animation(.easeInOut, value: columnVisibility)
         .onChange(of: columnVisibility, perform: { value in
             withAnimation(.interactiveSpring(response: 0.6, dampingFraction: 1.0, blendDuration: 0.7)) {
                 currentToken = nil
@@ -68,7 +69,7 @@ struct TokenGroupView: View {
     func DetailView(token: TokenModel) -> some View {
         GeometryReader { proxy in
             Color.black
-                .opacity(0.8)
+                .opacity(0.9)
                 .ignoresSafeArea()
                 .overlay {
                     ScrollView {
@@ -84,7 +85,7 @@ struct TokenGroupView: View {
                                 .matchedGeometryEffect(id: token.id, in: animation)
                         }
                     }
-                    .scaleEffect(detailOnAppear ? 1.5 : 1, anchor: .top)
+                    .scaleEffect(detailOnAppear ? 1.5 : 0.9, anchor: .top)
                 }
                 .toolbarRole(.navigationStack)
                 .toolbar {

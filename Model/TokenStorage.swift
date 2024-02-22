@@ -112,28 +112,58 @@ final class TokenStorage: ObservableObject {
             ])
         ]
     )
-    public func find(by ID: String) -> TokenGroup {
-        let filteredWords = words.filter {
-            $0.id == ID
-        }
-        if !filteredWords.isEmpty {
-            return filteredWords[0]
-        }
-
-        let filteredPhrases = phrases.filter {
-            $0.id == ID
-        }
-        if !filteredPhrases.isEmpty {
-            return filteredPhrases[0]
+    public func findGroup(by ID: String) -> Binding<TokenGroup>? {
+        if let wordsIndex = words.firstIndex(where: { tokenGroup in
+            tokenGroup.id == ID
+        }) {
+            return Binding {
+                self.words[wordsIndex]
+            } set: { value in
+                self.words[wordsIndex] = value
+            }
         }
 
-        let filteredSentences = sentences.filter {
-            $0.id == ID
-        }
-        if !filteredSentences.isEmpty {
-            return filteredSentences[0]
+        if let phrasesIndex = phrases.firstIndex(where: { tokenGroup in
+            tokenGroup.id == ID
+        }) {
+            return Binding {
+                self.phrases[phrasesIndex]
+            } set: { value in
+                self.phrases[phrasesIndex] = value
+            }
         }
 
-        return .empty
+        if let sentencesIndex = sentences.firstIndex(where: { tokenGroup in
+            tokenGroup.id == ID
+        }) {
+            return Binding {
+                self.sentences[sentencesIndex]
+            } set: { value in
+                self.sentences[sentencesIndex] = value
+            }
+        }
+
+        return nil
+    }
+    public func findToken(groupID: String, tokenID: UUID) -> Binding<TokenModel>? {
+        if let group = findGroup(by: groupID) {
+            if let index = group.tokens.firstIndex(where: { tokenModel in
+                tokenModel.id == tokenID
+            }) {
+                return group.tokens[index]
+            }
+        }
+        return nil
+    }
+    public func changeTheme(groupID: String, tokenID: UUID, theme: ColorTheme) {
+        if let wordsGroupIndex = words.firstIndex(where: { tokenGroup in
+            tokenGroup.id == groupID
+        }) {
+            if let tokenIndex = words[wordsGroupIndex].tokens.firstIndex(where: { token in
+                token.id == tokenID
+            }) {
+                words[wordsGroupIndex].tokens[tokenIndex].colorTheme = theme
+            }
+        }
     }
 }

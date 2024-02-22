@@ -19,6 +19,7 @@ enum Dimension {
 
 struct TokenView: View {
     @Environment(\.showType) var showType
+    @State private var textWidth: CGFloat = 0
     var minHeight: CGFloat {
         var height: CGFloat = 0
         if showType.wrappedValue == .text || showType.wrappedValue == .text_picture {
@@ -29,18 +30,61 @@ struct TokenView: View {
         }
         return height
     }
-    var token: TokenModel
+    @Binding var token: TokenModel
 
     // MARK: - Body
     var body: some View {
         ZStack(alignment: .top) {
-            if showType.wrappedValue == .picture || showType.wrappedValue == .text_picture {
-                Text(token.text)
-                    .font(.tokenText)
-                    .foregroundStyle(Color.clear)
-                    .padding()
-                    .frame(minHeight: minHeight)
-                    .zIndex(1)
+            if (showType.wrappedValue == .picture || showType.wrappedValue == .text_picture) && token.status != .editing {
+                ZStack(alignment: .bottom) {
+                    Text(token.text)
+                        .font(.tokenText)
+                        .foregroundStyle(Color.clear)
+                        .padding()
+                        .frame(minHeight: minHeight)
+                        .zIndex(1)
+                        .background(
+                            GeometryReader { textGeometry in
+                                Color.clear
+                                    .task {
+                                        self.textWidth = textGeometry.size.width
+                                    }
+                            }
+                        )
+
+                    token.image
+                        .frame(width: max(textWidth, Dimension.TokenText.minWidth))
+                        .frame(minHeight: minHeight)
+                        .zIndex(2)
+
+//                    CanvasRepresentingView()
+//                        .frame(width: max(textWidth, Dimension.TokenText.minWidth))
+//                        .frame(minHeight: minHeight)
+//                        .zIndex(2)
+                }
+            }
+            if showType.wrappedValue == .text && token.status == .editing{
+                ZStack(alignment: .bottom) {
+                    Text(token.text)
+                        .font(.tokenText)
+                        .foregroundStyle(Color.clear)
+                        .padding()
+                        .frame(minHeight: minHeight)
+                        .zIndex(1)
+                        .background(
+                            GeometryReader { textGeometry in
+                                Color.clear
+                                    .task {
+                                        self.textWidth = textGeometry.size.width
+                                    }
+                            }
+                        )
+
+                    CanvasRepresentingView(canvasView: token.canvas)
+                        .frame(width: max(textWidth, Dimension.TokenText.minWidth))
+                        .frame(minHeight: minHeight)
+                        .zIndex(2)
+                }
             }
             if showType.wrappedValue == .text || showType.wrappedValue == .text_picture {
                 Text(token.text)

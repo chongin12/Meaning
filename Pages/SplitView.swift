@@ -30,19 +30,12 @@ struct SplitView: View {
             .toolbar {
                 ToolbarItemGroup(placement: .topBarTrailing) {
                     Picker("asdf", selection: showType) {
-                        ForEach(ShowType.allCases) { type in
-                            switch type {
-                            case .text:
-                                Image(systemName: "rectangle")
-                                    .tag(ShowType.text)
-                            case .text_picture:
-                                Image(systemName: "rectangle.tophalf.inset.filled")
-                                    .tag(ShowType.text_picture)
-                            case .picture:
-                                Image(systemName: "rectangle.fill")
-                                    .tag(ShowType.picture)
-                            }
-                        }
+                        Image(systemName: "rectangle")
+                            .tag(ShowType.text)
+                        Image(systemName: "rectangle.tophalf.inset.filled")
+                            .tag(ShowType.text_picture)
+                        Image(systemName: "rectangle.fill")
+                            .tag(ShowType.picture)
                     }
                     .pickerStyle(.segmented)
                     Button(action: {

@@ -11,17 +11,6 @@ enum ShowType: String, CaseIterable {
     case text
     case text_picture
     case picture
-
-    mutating func convert() {
-        switch self {
-        case .text:
-            self = .text_picture
-        case .text_picture:
-            self = .picture
-        case .picture:
-            self = .text
-        }
-    }
 }
 
 extension ShowType: Identifiable {

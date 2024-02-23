@@ -11,16 +11,9 @@ struct TokenListItem: View {
     var tokenGroup: TokenGroup
     var body: some View {
         Label {
-            Text("\(tokenGroup.text), \(tokenGroup.colorTheme.debugDescription)")
-        } icon: {
-            if let icon = tokenGroup.colorTheme?.themePreviewImage {
-                icon
-                    .resizable()
-                    .scaledToFit()
-                    .shadow(radius: 3)
-            }
-        }
-        .frame(maxHeight: 30)
+            Text("\(tokenGroup.text)")
+        } icon: {}
+        .frame(minHeight: 30)
     }
 }
 

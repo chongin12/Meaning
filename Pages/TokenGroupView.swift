@@ -35,10 +35,9 @@ struct TokenGroupView: View {
                     columnVisibility = .detailOnly
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                         withAnimation(.interactiveSpring(response: 0.6, dampingFraction: 1.0, blendDuration: 0.7)) {
-                            currentToken = token
                             showDetailPage = true
                             showType.wrappedValue = .text
-                            tokenStorage.findToken(groupID: tokenGroupID, tokenID: token.id)?.wrappedValue.status = .editing
+                            currentToken = token
                         }
                     }
                 }, label: {
@@ -54,8 +53,8 @@ struct TokenGroupView: View {
         }
         .scrollIndicators(.hidden)
         .overlay {
-            if showDetailPage {
-                DetailView(token: $currentToken)
+            if showDetailPage, let tokenBinding = tokenStorage.findToken(groupID: tokenGroupID, tokenID: currentToken.id) {
+                DetailView(token: tokenBinding)
             }
         }
         .animation(.easeInOut, value: columnVisibility)
@@ -81,7 +80,6 @@ struct TokenGroupView: View {
                                 ForEach(ColorTheme.allCases) { theme in
                                     if theme != .empty {
                                         Button {
-//                                            tokenStorage.changeTheme(groupID: tokenGroupID, tokenID: token.id, theme: theme)
                                             token.wrappedValue.colorTheme = theme
                                         } label: {
                                             theme.themePreviewImage
@@ -93,6 +91,16 @@ struct TokenGroupView: View {
                             }
                             TokenView(token: token)
                                 .matchedGeometryEffect(id: token.id, in: animation)
+
+                            Text(token.wrappedValue.text)
+                                .font(.tokenText)
+                                .foregroundStyle(Color.clear)
+                                .padding()
+                                .frame(minWidth: Dimension.TokenText.minWidth, minHeight: Dimension.TokenPicture.minHeight)
+                                .overlay {
+                                    CanvasRepresentingView(canvasView: token.wrappedValue.canvas)
+                                }
+                                .clipShape(RoundedRectangle(cornerRadius: 25, style: .continuous))
                         }
                     }
                     .scaleEffect(detailOnAppear ? 1.5 : 0.9, anchor: .top)
@@ -105,6 +113,7 @@ struct TokenGroupView: View {
                             withAnimation {
                                 showDetailPage = false
                             }
+                            token.wrappedValue.status = .filled
                             currentToken = .empty
                         }, label: {
                             Text("Done")

@@ -38,11 +38,6 @@ struct SplitView: View {
                             .tag(ShowType.picture)
                     }
                     .pickerStyle(.segmented)
-                    Button(action: {
-
-                    }, label: {
-                        Image(systemName: "square.and.arrow.up")
-                    })
                 }
             }
         }
@@ -68,6 +63,7 @@ struct SplitView: View {
         }
     }
 
+    @ViewBuilder
     private func tokenListItems(tokenGroups : [TokenGroup]) -> some View {
         ForEach(tokenGroups) { tokenGroup in
             HStack {
@@ -80,7 +76,12 @@ struct SplitView: View {
                 })
                 Spacer()
             }
-            .background(self.selection == tokenGroup ? selectedLinearGradient() : unSelectedLinearGradient(), in: RoundedRectangle(cornerRadius: 10.0, style: .continuous))
+            .padding(.horizontal)
+            .padding(.vertical, 10)
+//            .background(self.selection == tokenGroup ? selectedLinearGradient() : unSelectedLinearGradient(), in: RoundedRectangle(cornerRadius: 10.0, style: .continuous))
+            .background(self.selection == tokenGroup ? Colors.point : Color.clear, in: RoundedRectangle(cornerRadius: 10.0, style: .continuous))
+            .foregroundStyle(self.selection == tokenGroup ? Colors.textBright : Color.black)
+            .padding(.vertical, -6)
         }
     }
 

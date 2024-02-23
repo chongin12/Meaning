@@ -36,8 +36,8 @@ extension TokenModel: Hashable, Equatable {
 }
 
 extension TokenModel {
-    var image: Image {
-        Image(uiImage: canvas.drawing.image(from: .zero, scale: 1.0))
+    public func imageFromCanvas(width: CGFloat, height: CGFloat, scale: CGFloat = 1.0) -> Image {
+        Image(uiImage: canvas.drawing.image(from: CGRect(x: 0, y: 0, width: width, height: height), scale: 1.0))
             .resizable()
     }
 }

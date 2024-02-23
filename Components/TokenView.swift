@@ -35,7 +35,7 @@ struct TokenView: View {
     // MARK: - Body
     var body: some View {
         ZStack(alignment: .top) {
-            if (showType.wrappedValue == .picture || showType.wrappedValue == .text_picture) && token.status != .editing {
+            if showType.wrappedValue == .picture || showType.wrappedValue == .text_picture {
                 ZStack(alignment: .bottom) {
                     Text(token.text)
                         .font(.tokenText)
@@ -52,38 +52,16 @@ struct TokenView: View {
                             }
                         )
 
-                    token.image
-                        .frame(width: max(textWidth, Dimension.TokenText.minWidth))
-                        .frame(minHeight: minHeight)
-                        .zIndex(2)
+                    VStack(spacing: 0) {
+                        if showType.wrappedValue == .text || showType.wrappedValue == .text_picture {
+                            Color.clear
+                                .frame(width: 0, height: Dimension.TokenText.minHeight)
+                        }
 
-//                    CanvasRepresentingView()
-//                        .frame(width: max(textWidth, Dimension.TokenText.minWidth))
-//                        .frame(minHeight: minHeight)
-//                        .zIndex(2)
-                }
-            }
-            if showType.wrappedValue == .text && token.status == .editing{
-                ZStack(alignment: .bottom) {
-                    Text(token.text)
-                        .font(.tokenText)
-                        .foregroundStyle(Color.clear)
-                        .padding()
-                        .frame(minHeight: minHeight)
-                        .zIndex(1)
-                        .background(
-                            GeometryReader { textGeometry in
-                                Color.clear
-                                    .task {
-                                        self.textWidth = textGeometry.size.width
-                                    }
-                            }
-                        )
-
-                    CanvasRepresentingView(canvasView: token.canvas)
-                        .frame(width: max(textWidth, Dimension.TokenText.minWidth))
-                        .frame(minHeight: minHeight)
-                        .zIndex(2)
+                        token.imageFromCanvas(width: max(textWidth, Dimension.TokenText.minWidth), height: Dimension.TokenPicture.minHeight)
+                            .frame(width: max(textWidth, Dimension.TokenText.minWidth), height: Dimension.TokenPicture.minHeight)
+                            .zIndex(2)
+                    }
                 }
             }
             if showType.wrappedValue == .text || showType.wrappedValue == .text_picture {

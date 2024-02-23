@@ -12,6 +12,12 @@ struct SplitView: View {
     @State private var columnVisibility: NavigationSplitViewVisibility = .all
     @EnvironmentObject var tokenStorage: TokenStorage
     @Environment(\.showType) var showType
+
+    // MARK: Add Items
+    @State private var text: String = ""
+    @State private var addingWordItem: Bool = false
+    @State private var addingPhraseItem: Bool = false
+
     var body: some View {
         NavigationSplitView(columnVisibility: $columnVisibility) {
             List {
@@ -48,18 +54,67 @@ struct SplitView: View {
     private func wordsSection() -> some View {
         Section("Words") {
             tokenListItems(tokenGroups: tokenStorage.words)
+            addWordItemView()
         }
+        .deleteDisabled(false)
     }
 
     private func phrasessSection() -> some View {
         Section("Phrases") {
             tokenListItems(tokenGroups: tokenStorage.phrases)
+            addPhraseItemView()
         }
     }
 
     private func sentencesSection() -> some View {
         Section("Sentences") {
             tokenListItems(tokenGroups: tokenStorage.sentences)
+        }
+    }
+
+    @ViewBuilder
+    private func addWordItemView() -> some View {
+        Button(action: {
+            addingWordItem.toggle()
+        }, label: {
+            Label(
+                title: { Text("Add Item") },
+                icon: { Image(systemName: "plus.app") }
+            )
+        })
+        .padding(.horizontal)
+        .padding(.top, 5)
+        .alert("Add Word", isPresented: $addingWordItem) {
+            TextField("Enter any word", text: $text)
+            Button("OK") {
+                if text.trimmingCharacters(in: [" "]) != "" {
+                    tokenStorage.words.append(TokenGroup(tokens: [TokenModel(text)]))
+                }
+                text = ""
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func addPhraseItemView() -> some View {
+        Button(action: {
+            addingPhraseItem.toggle()
+        }, label: {
+            Label(
+                title: { Text("Add Item") },
+                icon: { Image(systemName: "plus.app") }
+            )
+        })
+        .padding(.horizontal)
+        .padding(.top, 5)
+        .alert("Add Phrase", isPresented: $addingPhraseItem) {
+            TextField("Enter any phrase", text: $text)
+            Button("OK") {
+                if text.trimmingCharacters(in: [" "]) != "" {
+                    tokenStorage.phrases.append(TokenGroup(tokens: [TokenModel(text)]))
+                }
+                text = ""
+            }
         }
     }
 
@@ -78,19 +133,10 @@ struct SplitView: View {
             }
             .padding(.horizontal)
             .padding(.vertical, 10)
-//            .background(self.selection == tokenGroup ? selectedLinearGradient() : unSelectedLinearGradient(), in: RoundedRectangle(cornerRadius: 10.0, style: .continuous))
             .background(self.selection == tokenGroup ? Colors.point : Color.clear, in: RoundedRectangle(cornerRadius: 10.0, style: .continuous))
             .foregroundStyle(self.selection == tokenGroup ? Colors.textBright : Color.black)
-            .padding(.vertical, -6)
+            .padding(.vertical, -6.3)
         }
-    }
-
-    private func selectedLinearGradient() -> LinearGradient {
-        LinearGradient(colors: [Color.clear, Color.clear, Colors.tertiary], startPoint: .leading, endPoint: .trailing)
-    }
-
-    private func unSelectedLinearGradient() -> LinearGradient {
-        LinearGradient(colors: [Color.clear], startPoint: .leading, endPoint: .trailing)
     }
 }
 

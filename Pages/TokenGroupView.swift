@@ -113,7 +113,6 @@ struct TokenGroupView: View {
                             withAnimation {
                                 showDetailPage = false
                             }
-                            token.wrappedValue.status = .filled
                             currentToken = .empty
                         }, label: {
                             Text("Done")

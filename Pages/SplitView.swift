@@ -17,6 +17,9 @@ struct SplitView: View {
     @State private var text: String = ""
     @State private var addingWordItem: Bool = false
     @State private var addingPhraseItem: Bool = false
+    @State private var addingSentence: Bool = false
+
+    @State private var choosedTokens: [TokenModel] = []
 
     var body: some View {
         NavigationSplitView(columnVisibility: $columnVisibility) {
@@ -69,6 +72,7 @@ struct SplitView: View {
     private func sentencesSection() -> some View {
         Section("Sentences") {
             tokenListItems(tokenGroups: tokenStorage.sentences)
+            addSentenceView()
         }
     }
 
@@ -92,6 +96,9 @@ struct SplitView: View {
                 }
                 text = ""
             }
+            Button("Cancel", role: .cancel, action: {
+                text = ""
+            })
         }
     }
 
@@ -115,7 +122,96 @@ struct SplitView: View {
                 }
                 text = ""
             }
+            Button("Cancel", role: .cancel, action: {
+                text = ""
+            })
         }
+    }
+
+    @ViewBuilder
+    private func addSentenceView() -> some View {
+        Button(action: {
+            addingSentence.toggle()
+        }, label: {
+            Label(
+                title: { Text("Add Item") },
+                icon: { Image(systemName: "plus.app") }
+            )
+        })
+        .padding(.horizontal)
+        .padding(.top, 5)
+        .sheet(isPresented: $addingSentence, content: {
+            NavigationStack {
+                HStack {
+                    List {
+                        Section(header: Text("Words")) {
+                            ForEach(tokenStorage.words) { word in
+                                Button(word.text) {
+                                    withAnimation {
+                                        choosedTokens.append(
+                                            TokenModel(
+                                                word.tokens[0].text,
+                                                colorTheme: word.tokens[0].colorTheme,
+                                                canvas: word.tokens[0].canvas
+                                            )
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                        Section(header: Text("Phrases")) {
+                            ForEach(tokenStorage.phrases) { phrase in
+                                Button(phrase.text) {
+                                    withAnimation {
+                                        choosedTokens.append(
+                                            TokenModel(
+                                                phrase.tokens[0].text,
+                                                colorTheme: phrase.tokens[0].colorTheme,
+                                                canvas: phrase.tokens[0].canvas
+                                            )
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if choosedTokens.isEmpty {
+                        VStack {
+                            Text("Select words or phrases")
+                                .padding(.top)
+
+                            List(choosedTokens) { token in
+                                Text(token.text)
+                            }
+                        }
+                    } else {
+                        List(choosedTokens) { token in
+                            Text(token.text)
+                        }
+                    }
+                }
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button(action: {
+                            addingSentence.toggle()
+                            choosedTokens.removeAll()
+                        }, label: {
+                            Text("Cancel")
+                        })
+                    }
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button(action: {
+                            tokenStorage.sentences.append(TokenGroup(tokens: choosedTokens))
+                            choosedTokens.removeAll()
+                            addingSentence.toggle()
+                        }, label: {
+                            Text("Done")
+                        })
+                    }
+                }
+                .navigationTitle("Add Sentence")
+            }
+        })
     }
 
     @ViewBuilder
@@ -134,7 +230,7 @@ struct SplitView: View {
             .padding(.horizontal)
             .padding(.vertical, 10)
             .background(self.selection == tokenGroup ? Colors.point : Color.clear, in: RoundedRectangle(cornerRadius: 10.0, style: .continuous))
-            .foregroundStyle(self.selection == tokenGroup ? Colors.textBright : Color.black)
+            .foregroundStyle(self.selection == tokenGroup ? Colors.textBright : Color.primary)
             .padding(.vertical, -6.3)
         }
     }

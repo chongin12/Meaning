@@ -12,22 +12,12 @@ struct TokenModel: Identifiable {
     var text: String
     // 그리기 요소 저장할 var 필요
     var colorTheme: ColorTheme
-    var status: StatusType
     var canvas: PKCanvasView
     var id = UUID()
-    init(_ text: String, colorTheme: ColorTheme = .empty, status: StatusType = .default) {
+    init(_ text: String, colorTheme: ColorTheme = .empty, canvas: PKCanvasView = PKCanvasView()) {
         self.text = text
         self.colorTheme = colorTheme
-        self.status = status
-        self.canvas = PKCanvasView()
-    }
-}
-
-extension TokenModel {
-    enum StatusType {
-        case `default`
-        case editing
-        case filled
+        self.canvas = canvas
     }
 }
 

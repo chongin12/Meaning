@@ -145,7 +145,7 @@ final class TokenStorage: ObservableObject {
 
         return nil
     }
-    public func findToken(groupID: String, tokenID: UUID) -> Binding<TokenModel>? {
+    public func findBindingToken(groupID: String, tokenID: UUID) -> Binding<TokenModel>? {
         if let group = findGroup(by: groupID) {
             if let index = group.tokens.firstIndex(where: { tokenModel in
                 tokenModel.id == tokenID
@@ -154,6 +154,16 @@ final class TokenStorage: ObservableObject {
             }
         }
         return nil
+    }
+    public func findWord(text: String) -> TokenModel? {
+        words.first { tokenGroup in
+            tokenGroup.tokens[0].text == text
+        }?.tokens.first
+    }
+    public func findPhrase(text: String) -> TokenModel? {
+        phrases.first { tokenGroup in
+            tokenGroup.tokens[0].text == text
+        }?.tokens.first
     }
     public func changeTheme(groupID: String, tokenID: UUID, theme: ColorTheme) {
         if let wordsGroupIndex = words.firstIndex(where: { tokenGroup in

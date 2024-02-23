@@ -41,7 +41,7 @@ struct TokenGroupView: View {
                         }
                     }
                 }, label: {
-                    if let tokenBinding = tokenStorage.findToken(groupID: tokenGroupID, tokenID: token.id) {
+                    if let tokenBinding = tokenStorage.findBindingToken(groupID: tokenGroupID, tokenID: token.id) {
                         TokenView(token: tokenBinding)
                             .scaleEffect(currentToken.id == token.id && showDetailPage ? 1.5 : 0.9)
                             .matchedGeometryEffect(id: token.id, in: animation)
@@ -53,7 +53,7 @@ struct TokenGroupView: View {
         }
         .scrollIndicators(.hidden)
         .overlay {
-            if showDetailPage, let tokenBinding = tokenStorage.findToken(groupID: tokenGroupID, tokenID: currentToken.id) {
+            if showDetailPage, let tokenBinding = tokenStorage.findBindingToken(groupID: tokenGroupID, tokenID: currentToken.id) {
                 DetailView(token: tokenBinding)
             }
         }
@@ -127,6 +127,7 @@ struct TokenGroupView: View {
                             tokenStorage.updateToken(with: token.wrappedValue)
                             withAnimation {
                                 showDetailPage = false
+                                columnVisibility = .all
                             }
                             currentToken = .empty
                         }, label: {

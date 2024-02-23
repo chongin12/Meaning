@@ -85,12 +85,20 @@ struct TokenGroupView: View {
                                             theme.themePreviewImage
                                         }
                                         .buttonStyle(.plain)
-                                        .scaleEffect(0.5)
+                                        .scaleEffect(0.7)
+                                        .overlay {
+                                            if token.wrappedValue.colorTheme == theme {
+                                                RoundedRectangle(cornerRadius: 25, style: .continuous)
+                                                    .stroke(Color.secondary, lineWidth: 0.7)
+                                            }
+                                        }
                                     }
                                 }
                             }
+                            .padding(.horizontal)
                             TokenView(token: token)
                                 .matchedGeometryEffect(id: token.id, in: animation)
+                                .padding(.vertical, 10)
 
                             Text(token.wrappedValue.text)
                                 .font(.tokenText)

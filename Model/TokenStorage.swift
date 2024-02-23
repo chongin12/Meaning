@@ -166,4 +166,28 @@ final class TokenStorage: ObservableObject {
             }
         }
     }
+    public func updateToken(with token: TokenModel) {
+        for i in 0 ..< words.count {
+            if words[i].tokens[0].text == token.text {
+                words[i].tokens[0].colorTheme = token.colorTheme
+                words[i].tokens[0].canvas = token.canvas
+            }
+        }
+
+        for i in 0 ..< phrases.count {
+            if phrases[i].tokens[0].text == token.text {
+                phrases[i].tokens[0].colorTheme = token.colorTheme
+                phrases[i].tokens[0].canvas = token.canvas
+            }
+        }
+
+        for i in 0 ..< sentences.count {
+            for j in 0 ..< sentences[i].tokens.count {
+                if sentences[i].tokens[j].text == token.text {
+                    sentences[i].tokens[j].colorTheme = token.colorTheme
+                    sentences[i].tokens[j].canvas = token.canvas
+                }
+            }
+        }
+    }
 }

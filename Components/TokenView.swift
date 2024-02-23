@@ -80,7 +80,7 @@ struct TokenView: View {
         .frame(minWidth: Dimension.TokenText.minWidth)
         .background {
             RoundedRectangle(cornerRadius: 25.0, style: .continuous)
-                .fill(Colors.point)
+                .fill(Color.gray.opacity(0.2))
         }
         .animation(.bouncy, value: showType.wrappedValue)
         .transition(.identity)

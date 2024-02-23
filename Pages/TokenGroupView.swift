@@ -100,7 +100,13 @@ struct TokenGroupView: View {
                                 .overlay {
                                     CanvasRepresentingView(canvasView: token.wrappedValue.canvas)
                                 }
-                                .clipShape(RoundedRectangle(cornerRadius: 25, style: .continuous))
+                                .clipShape(
+                                    RoundedRectangle(cornerRadius: 25, style: .continuous)
+                                )
+                                .overlay {
+                                    RoundedRectangle(cornerRadius: 25, style: .continuous)
+                                        .stroke(Color.secondary, lineWidth: 0.5)
+                                }
                         }
                     }
                     .scaleEffect(detailOnAppear ? 1.5 : 0.9, anchor: .top)
@@ -110,6 +116,7 @@ struct TokenGroupView: View {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button(action: {
                             detailOnAppear = false
+                            tokenStorage.updateToken(with: token.wrappedValue)
                             withAnimation {
                                 showDetailPage = false
                             }

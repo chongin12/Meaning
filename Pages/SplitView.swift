@@ -25,7 +25,9 @@ struct SplitView: View {
         NavigationSplitView(columnVisibility: $columnVisibility) {
             List {
                 wordsSection()
+                Divider()
                 phrasessSection()
+                Divider()
                 sentencesSection()
             }
         } detail: {

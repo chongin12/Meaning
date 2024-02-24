@@ -13,6 +13,7 @@ struct TokenGroupView: View {
     @EnvironmentObject var tokenStorage: TokenStorage
     @Environment(\.showType) var showType
     @Binding private var columnVisibility: NavigationSplitViewVisibility
+    @Binding private var tutorialAnimation: Bool
     var currentTokenGroup: Binding<TokenGroup> {
         tokenStorage.findGroup(by: tokenGroupID) ?? .constant(.empty)
     }
@@ -22,11 +23,14 @@ struct TokenGroupView: View {
     @State var showDetailPage: Bool = false
     @State var detailOnAppear: Bool = false
 
+    @State var hideTutorial: Bool = false
+
     @Namespace var animation
 
-    init(_ tokenGroupID: String, _ columnVisibility: Binding<NavigationSplitViewVisibility>) {
+    init(_ tokenGroupID: String, _ columnVisibility: Binding<NavigationSplitViewVisibility>, _ tutorialAnimation: Binding<Bool> = .constant(false)) {
         self.tokenGroupID = tokenGroupID
         _columnVisibility = columnVisibility
+        _tutorialAnimation = tutorialAnimation
     }
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
@@ -35,6 +39,7 @@ struct TokenGroupView: View {
                     columnVisibility = .detailOnly
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                         withAnimation(.interactiveSpring(response: 0.6, dampingFraction: 1.0, blendDuration: 0.7)) {
+                            tutorialAnimation = false
                             showDetailPage = true
                             showType.wrappedValue = .text
                             currentToken = token
@@ -48,6 +53,16 @@ struct TokenGroupView: View {
                     }
                 })
                 .buttonStyle(ScaleButtonStyle())
+
+                if tutorialAnimation {
+                    Text("👈 Touch this token!")
+                        .onAppear {
+                            withAnimation(.easeInOut(duration: 0.5).repeatForever()) {
+                                hideTutorial = true
+                            }
+                        }
+                        .opacity(hideTutorial ? 0.0 : 1.0)
+                }
             }
             .padding()
         }
@@ -80,7 +95,9 @@ struct TokenGroupView: View {
                                 ForEach(ColorTheme.allCases) { theme in
                                     if theme != .empty {
                                         Button {
-                                            token.wrappedValue.colorTheme = theme
+                                            withAnimation {
+                                                token.wrappedValue.colorTheme = theme
+                                            }
                                         } label: {
                                             theme.themePreviewImage
                                         }

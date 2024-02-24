@@ -87,7 +87,6 @@ struct TokenView: View {
     }
 }
 
-
 struct ConstTokenView: View {
     var token: TokenModel
     var showType: ShowType

@@ -22,8 +22,10 @@ struct SplitView: View {
     @State private var choosedTokens: [TokenModel] = []
 
     // MARK: Tutorial
-    @State private var phase: Int = 1
+    @State private var phase: Int = 0
     @State private var showingTutorial: Bool = true
+    @State private var tutorialAnimation: Bool = false
+    @State private var isFlickering = false
 
     var body: some View {
         NavigationSplitView(columnVisibility: $columnVisibility) {
@@ -37,7 +39,7 @@ struct SplitView: View {
         } detail: {
             Group {
                 if let selection {
-                    TokenGroupView(selection.id, $columnVisibility)
+                    TokenGroupView(selection.id, $columnVisibility, $tutorialAnimation)
                 } else {
                     Text("choose any Words, Phrases, or Sentences in Sidebar")
                 }
@@ -57,8 +59,15 @@ struct SplitView: View {
                         Button(action: {
                             phase += 1
                         }, label: {
-                            Text("Next")
+                            Text("Next Tutorial")
                         })
+                        .buttonStyle(.borderedProminent)
+                        .opacity(isFlickering ? 0.7 : 1.0)
+                        .onAppear {
+                            withAnimation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true)) {
+                                isFlickering.toggle()
+                            }
+                        }
                     }
                 }
             }
@@ -69,29 +78,69 @@ struct SplitView: View {
             showingTutorial = true
         })
         .sheet(isPresented: $showingTutorial, content: {
-            if phase == 1 {
+            if phase == 0 {
                 TutorialPage(
-                    "Step 1",
-                    "Creating Words",
+                    "Welcome",
+                    "Tutorial",
                     """
-                    In this step, I have already created the words 'I' and 'smile'.
-                    Select each word from the left sidebar, and use the Apple Pencil to draw a simple picture or symbol that represents the word.
+                    In this app, a "token" refers to a word or a phrase.
 
-                    Once you have completed all the tasks, click the 'Next' button at the top right.
+                    When you select an item from the left sidebar, the corresponding token for that item will be displayed.
+
+                    You can illustrate the selected token with a simple drawing or symbol.
+
+                    After selecting the word "smile" from the left sidebar, touch the token to draw a smiling face symbol.
+
+                    After completing everything, click the 'Next Tutorial' button at the top right.
                     """,
                     buttonAction: {
-                        tokenStorage.words.append(TokenGroup(tokens: [TokenModel("I")]))
                         tokenStorage.words.append(TokenGroup(tokens: [TokenModel("smile")]))
+                        selection = tokenStorage.words.last
+                        tutorialAnimation = true
                     }
                 ) {
                     HStack {
-                        Spacer()
-                        ConstTokenView(token: .init("I"), showType: .text)
                         Spacer()
                         ConstTokenView(token: .init("smile"), showType: .text)
                         Spacer()
                     }
                     .padding()
+                }
+            }
+            if phase == 1 {
+                TutorialPage(
+                    "Step 1",
+                    "Creating Words",
+                    """
+                    In this step, you need to complete the word 'I'. Select the word 'I' from the left sidebar, and use the Apple Pencil to draw a simple picture or symbol that represents this word.
+
+                    Additionally, you can change the display format at any time. You can choose to display text only, both text and canvas, or canvas only.
+
+                    After completing everything, click the 'Next' button at the top right.
+                    """,
+                    buttonAction: {
+                        tokenStorage.words.append(TokenGroup(tokens: [TokenModel("I")]))
+                        selection = tokenStorage.words.last
+                    }
+                ) {
+                    VStack {
+                        Picker("Show Type", selection: showType) {
+                            Image(systemName: "rectangle")
+                                .tag(ShowType.text)
+                            Image(systemName: "rectangle.tophalf.inset.filled")
+                                .tag(ShowType.text_picture)
+                            Image(systemName: "rectangle.fill")
+                                .tag(ShowType.picture)
+                        }
+                        .pickerStyle(.segmented)
+                        .padding()
+                        HStack {
+                            Spacer()
+                            TokenView(token: .constant(.init("I")))
+                            Spacer()
+                        }
+                        .padding()
+                    }
                 }
             } else if phase == 2 {
                 TutorialPage(
@@ -105,6 +154,7 @@ struct SplitView: View {
                     """,
                     buttonAction: {
                         tokenStorage.phrases.append(TokenGroup(tokens: [TokenModel("in the morning")]))
+                        selection = tokenStorage.phrases[0]
                     }
                 ) {
                     HStack {
@@ -122,10 +172,13 @@ struct SplitView: View {
                     Now, let's use the words and phrases we have created to make a sentence.
                     Select 'Add Sentence' from the left sidebar and complete the sentence 'I smile in the morning'.
 
-                    After finishing the sentence, click on the 'square' icon at the top right to check the results.
+                    After finishing the sentence, click on the filled rectangle icon at the top right to check the results.
 
-                    Once all the work is done, click the 'Next' button at the top right.
-                    """
+                    After completing everything, click the 'Next' button at the top right.
+                    """,
+                    buttonAction: {
+                        addingSentence.toggle()
+                    }
                 ) {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 20) {
@@ -205,6 +258,7 @@ struct SplitView: View {
             Spacer()
         }
         .padding()
+        .transition(.identity)
     }
 
     private func wordsSection() -> some View {
@@ -248,6 +302,7 @@ struct SplitView: View {
                     tokenStorage.words.append(TokenGroup(tokens: [TokenModel(text)]))
                 }
                 text = ""
+                selection = tokenStorage.words.last
             }
             Button("Cancel", role: .cancel, action: {
                 text = ""
@@ -274,6 +329,7 @@ struct SplitView: View {
                     tokenStorage.phrases.append(TokenGroup(tokens: [TokenModel(text)]))
                 }
                 text = ""
+                selection = tokenStorage.phrases.last
             }
             Button("Cancel", role: .cancel, action: {
                 text = ""
@@ -333,13 +389,19 @@ struct SplitView: View {
                             Text("Select words or phrases")
                                 .padding(.top)
 
-                            List(choosedTokens) { token in
-                                Text(token.text)
+                            List {
+                                ForEach(choosedTokens) { token in
+                                    Text(token.text)
+                                }
+                                .onDelete(perform: delete)
                             }
                         }
                     } else {
-                        List(choosedTokens) { token in
-                            Text(token.text)
+                        List {
+                            ForEach(choosedTokens) { token in
+                                Text(token.text)
+                            }
+                            .onDelete(perform: delete)
                         }
                     }
                 }
@@ -357,14 +419,20 @@ struct SplitView: View {
                             tokenStorage.sentences.append(TokenGroup(tokens: choosedTokens))
                             choosedTokens.removeAll()
                             addingSentence.toggle()
+                            selection = tokenStorage.sentences.last
                         }, label: {
                             Text("Done")
                         })
                     }
                 }
                 .navigationTitle("Add Sentence")
+                .padding()
             }
         })
+    }
+
+    private func delete(at offsets: IndexSet) {
+        choosedTokens.remove(atOffsets: offsets)
     }
 
     @ViewBuilder

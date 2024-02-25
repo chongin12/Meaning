@@ -14,6 +14,7 @@ struct TokenGroupView: View {
     @Environment(\.showType) var showType
     @Binding private var columnVisibility: NavigationSplitViewVisibility
     @Binding private var tutorialAnimation: Bool
+    @Binding private var isNextButtonShowing: Bool
     var currentTokenGroup: Binding<TokenGroup> {
         tokenStorage.findGroup(by: tokenGroupID) ?? .constant(.empty)
     }
@@ -27,22 +28,26 @@ struct TokenGroupView: View {
 
     @Namespace var animation
 
-    init(_ tokenGroupID: String, _ columnVisibility: Binding<NavigationSplitViewVisibility>, _ tutorialAnimation: Binding<Bool> = .constant(false)) {
+    init(_ tokenGroupID: String, _ columnVisibility: Binding<NavigationSplitViewVisibility>, _ tutorialAnimation: Binding<Bool> = .constant(false), _ isNextButtonShowing: Binding<Bool> = .constant(false)) {
         self.tokenGroupID = tokenGroupID
         _columnVisibility = columnVisibility
         _tutorialAnimation = tutorialAnimation
+        _isNextButtonShowing = isNextButtonShowing
     }
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             WrappingHStack(currentTokenGroup.wrappedValue.tokens, alignment: .leading, lineSpacing: 25.0) { token in
                 Button(action: {
                     columnVisibility = .detailOnly
+                    withAnimation {
+                        isNextButtonShowing = false
+                        tutorialAnimation = false
+                        showType.wrappedValue = .text
+                    }
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                         withAnimation(.interactiveSpring(response: 0.6, dampingFraction: 1.0, blendDuration: 0.7)) {
-                            tutorialAnimation = false
-                            showDetailPage = true
-                            showType.wrappedValue = .text
                             currentToken = token
+                            showDetailPage = true
                         }
                     }
                 }, label: {
@@ -61,12 +66,11 @@ struct TokenGroupView: View {
                                 hideTutorial = true
                             }
                         }
-                        .opacity(hideTutorial ? 0.0 : 1.0)
+                        .opacity(hideTutorial ? 0.1 : 1.0)
                 }
             }
             .padding()
         }
-        .scrollIndicators(.hidden)
         .overlay {
             if showDetailPage, let tokenBinding = tokenStorage.findBindingToken(groupID: tokenGroupID, tokenID: currentToken.id) {
                 DetailView(token: tokenBinding)
@@ -89,7 +93,7 @@ struct TokenGroupView: View {
                 .opacity(0.9)
                 .ignoresSafeArea()
                 .overlay {
-                    ScrollView {
+                    ScrollView(.vertical, showsIndicators: false) {
                         VStack {
                             HStack {
                                 ForEach(ColorTheme.allCases) { theme in
@@ -145,6 +149,7 @@ struct TokenGroupView: View {
                             withAnimation {
                                 showDetailPage = false
                                 columnVisibility = .all
+                                isNextButtonShowing = true
                             }
                             currentToken = .empty
                         }, label: {

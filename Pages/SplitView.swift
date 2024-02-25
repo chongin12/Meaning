@@ -26,6 +26,10 @@ struct SplitView: View {
     @State private var showingTutorial: Bool = true
     @State private var tutorialAnimation: Bool = false
     @State private var isFlickering = false
+    @State private var isNextButtonShowing = true
+
+    // MARK: OSS Notice
+    @State private var notice: Bool = false
 
     var body: some View {
         NavigationSplitView(columnVisibility: $columnVisibility) {
@@ -35,11 +39,18 @@ struct SplitView: View {
                 phrasessSection()
                 Divider()
                 sentencesSection()
+                Divider()
+                Button {
+                    notice.toggle()
+                } label: {
+                    Text("OSS Notice | Meaning")
+                }
+
             }
         } detail: {
             Group {
                 if let selection {
-                    TokenGroupView(selection.id, $columnVisibility, $tutorialAnimation)
+                    TokenGroupView(selection.id, $columnVisibility, $tutorialAnimation, $isNextButtonShowing)
                 } else {
                     Text("choose any Words, Phrases, or Sentences in Sidebar")
                 }
@@ -55,7 +66,7 @@ struct SplitView: View {
                             .tag(ShowType.picture)
                     }
                     .pickerStyle(.segmented)
-                    if phase < 4 {
+                    if phase < 4 && isNextButtonShowing {
                         Button(action: {
                             phase += 1
                         }, label: {
@@ -76,6 +87,17 @@ struct SplitView: View {
         .tint(.brown)
         .onChange(of: phase, perform: { value in
             showingTutorial = true
+        })
+        .sheet(isPresented: $notice, content: {
+            VStack(spacing: 10) {
+                Text("WrappingHStack")
+                    .font(.title)
+                    .padding()
+
+                Text("[https://github.com/dkk/WrappingHStack](https://github.com/dkk/WrappingHStack)")
+                Text("Copyright (c) 2021 Daniel Klöck")
+                Text("MIT License")
+            }
         })
         .sheet(isPresented: $showingTutorial, content: {
             if phase == 0 {
@@ -137,6 +159,10 @@ struct SplitView: View {
                         HStack {
                             Spacer()
                             TokenView(token: .constant(.init("I")))
+                            Spacer()
+                            if let word1 = tokenStorage.findWord(text: "smile") {
+                                TokenView(token: .constant(word1))
+                            }
                             Spacer()
                         }
                         .padding()
